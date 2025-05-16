@@ -1,0 +1,113 @@
+name: Build and Deploy to Azure Container Apps
+
+on:
+  pull_request:
+    types:
+      - closed
+  #push:
+    branches:
+      - 'main'  # Trigger workflow on pull request closed event to main
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+
+env:
+  VITE_BE_APP_ENDPOINT: "https://rt-backend.redforest-e71bb2d1.westus.azurecontainerapps.io"
+      
+jobs:
+  backend-build-and-deploy:
+    if: github.event.pull_request.merged == true 
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: 🛎 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔍 Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: "Folder change check"
+        uses: dorny/paths-filter@v3
+        id: backend
+        with:
+          filters: |
+            backend:
+              - "backend/**"
+
+      - name: 🔐 Log in to Azure Container Registry (ACR)
+        if: steps.backend.outputs.backend == 'true'
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: 🔨 Build Docker Image with Commit ID as Tag
+        if: steps.backend.outputs.backend == 'true'
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          echo "IMAGE_TAG=$COMMIT_ID" >> $GITHUB_ENV
+          cd backend
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/backend-dev:$COMMIT_ID .
+
+      - name: 🚀 Push Image to ACR
+        if: steps.backend.outputs.backend == 'true'
+        run: |
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/backend-dev:$IMAGE_TAG
+
+      - name: 🎯 Deploy to Azure Container Apps
+        if: steps.backend.outputs.backend == 'true'
+        run: |
+          az containerapp update \
+            --name ${{ secrets.CONTAINER_APP_NAME_BACKEND }} \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --image ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/backend-dev:$IMAGE_TAG 
+
+  frontend-build-and-deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: 🛎 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔍 Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: "Folder change check"
+        uses: dorny/paths-filter@v3
+        id: frontend
+        with:
+          filters: |
+            frontend:
+              - "frontend/**"
+
+      - name: 🔐 Log in to Azure Container Registry (ACR)
+        if: steps.frontend.outputs.frontend == 'true'
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: 🔨 Build Docker Image with Commit ID as Tag
+        if: steps.frontend.outputs.frontend == 'true'
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          echo "IMAGE_TAG=$COMMIT_ID" >> $GITHUB_ENV
+          cd frontend
+          echo "VITE_BE_APP_ENDPOINT="https://rt-backend.redforest-e71bb2d1.westus.azurecontainerapps.io/"" >> .env.local
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/frontend-dev:$COMMIT_ID .
+
+      - name: 🚀 Push Image to ACR
+        if: steps.frontend.outputs.frontend == 'true'
+        run: |
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/frontend-dev:$IMAGE_TAG
+
+      - name: 🎯 Deploy to Azure Container Apps
+        if: steps.frontend.outputs.frontend == 'true'
+        run: |
+          az containerapp update \
+            --name ${{ secrets.CONTAINER_APP_NAME_FRONTEND }} \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --image ${{ secrets.ACR_NAME }}.azurecr.io/retail-solution-accelerator/frontend-dev:$IMAGE_TAG

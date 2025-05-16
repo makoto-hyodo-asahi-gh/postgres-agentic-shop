@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "principalId": {
+      "value": "${AZURE_PRINCIPAL_ID}"
+    },
+    "administratorLoginUser": {
+      "value": "${ADMINISTRATOR_LOGIN_USER=rtbackend}"
+    },
+    "administratorLoginPassword": {
+      "value": "${ADMINISTRATOR_LOGIN_PASSWORD=Agent2shop}"
+    },
+    "webAppExists": {
+      "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
+    },
+    "openAILocation": {
+      "value": "${AZURE_OPENAI_LOCATION}"
+    },
+    "deployAzureOpenAI": {
+      "value": "${DEPLOY_AZURE_OPENAI=true}"
+    },
+    "azureOpenAIKey": {
+      "value": "${AZURE_OPENAI_KEY}"
+    },
+    "azureOpenAIEndpoint": {
+      "value": "${AZURE_OPENAI_ENDPOINT}"
+    },
+    "openAIChatHost": {
+      "value": "${OPENAI_CHAT_HOST=azure}"
+    },
+    "chatModelName": {
+      "value": "${AZURE_OPENAI_CHAT_MODEL=gpt-4o}"
+    },
+    "chatDeploymentName": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-4o}"
+    },
+    "chatDeploymentVersion":{
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_VERSION=2024-11-20}"
+    },
+    "chatDeploymentSku": {
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_SKU=GlobalStandard}"
+    },
+    "chatDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_CHAT_DEPLOYMENT_CAPACITY=150}"
+    },
+    "openAIEmbedHost": {
+      "value": "${OPENAI_EMBED_HOST=azure}"
+    },
+    "embedModelName":{
+      "value": "${AZURE_OPENAI_EMBED_MODEL=text-embedding-ada-002}"
+    },
+    "embedDeploymentName": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT=text-embedding-ada-002}"
+    },
+    "embedDeploymentVersion":{
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_VERSION=2}"
+    },
+    "embedDeploymentSku": {
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_SKU=Standard}"
+    },
+    "embedDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EMBED_DEPLOYMENT_CAPACITY=120}"
+    },
+    "containerRegistryName": {
+      "value": "${AZURE_CONTAINER_REGISTRY_ENDPOINT}"
+    }
+  }
+}

@@ -1,0 +1,244 @@
+id,product_id,feature_id,feature_name
+1,1,1,Bluetooth
+2,1,6,Microphone
+3,1,8,Touch Controls
+4,1,9,App Support
+5,1,11,Multi Device Pairing
+6,1,13,Fast Charging
+7,1,17,Audio Customization
+8,2,1,Bluetooth
+9,2,2,Wired Connection
+10,2,11,Multi Device Pairing
+11,2,16,Foldable Design
+12,2,17,Audio Customization
+13,2,20,Onboard Battery
+14,2,21,Carrying Case
+15,3,1,Bluetooth
+16,3,2,Wired Connection
+17,3,6,Microphone
+18,3,8,Touch Controls
+19,3,13,Fast Charging
+20,3,20,Onboard Battery
+21,4,1,Bluetooth
+22,4,3,Active Noise Cancellation
+23,4,7,Voice Assistant
+24,4,11,Multi Device Pairing
+25,4,13,Fast Charging
+26,4,20,Onboard Battery
+27,4,21,Carrying Case
+28,5,1,Bluetooth
+29,5,3,Active Noise Cancellation
+30,5,7,Voice Assistant
+31,5,11,Multi Device Pairing
+32,5,13,Fast Charging
+33,5,20,Onboard Battery
+34,5,21,Carrying Case
+35,6,1,Bluetooth
+36,6,6,Microphone
+37,6,8,Touch Controls
+38,6,15,Water Resistant
+39,6,20,Onboard Battery
+40,6,21,Carrying Case
+41,7,1,Bluetooth
+42,7,6,Microphone
+43,7,7,Voice Assistant
+44,7,8,Touch Controls
+45,7,9,App Support
+46,7,15,Water Resistant
+47,7,21,Carrying Case
+48,8,1,Bluetooth
+49,8,6,Microphone
+50,8,8,Touch Controls
+51,8,9,App Support
+52,8,15,Water Resistant
+53,8,20,Onboard Battery
+54,8,21,Carrying Case
+55,9,2,Wired Connection
+56,10,1,Bluetooth
+57,10,2,Wired Connection
+58,10,3,Active Noise Cancellation
+59,10,6,Microphone
+60,10,8,Touch Controls
+61,10,13,Fast Charging
+62,10,15,Water Resistant
+63,10,16,Foldable Design
+64,10,18,Hi Res Audio
+65,11,1,Bluetooth
+66,11,2,Wired Connection
+67,11,4,Passive Noise Isolation
+68,11,6,Microphone
+69,11,7,Voice Assistant
+70,11,11,Multi Device Pairing
+71,11,13,Fast Charging
+72,11,20,Onboard Battery
+73,11,21,Carrying Case
+74,12,1,Bluetooth
+75,12,6,Microphone
+76,12,13,Fast Charging
+77,12,15,Water Resistant
+78,12,19,Surround Sound
+79,12,20,Onboard Battery
+80,13,1,Bluetooth
+81,13,2,Wired Connection
+82,13,3,Active Noise Cancellation
+83,13,13,Fast Charging
+84,13,21,Carrying Case
+85,14,1,Bluetooth
+86,14,2,Wired Connection
+87,14,3,Active Noise Cancellation
+88,14,6,Microphone
+89,14,8,Touch Controls
+90,14,20,Onboard Battery
+91,15,1,Bluetooth
+92,15,2,Wired Connection
+93,15,3,Active Noise Cancellation
+94,15,5,Transparency Mode
+95,15,8,Touch Controls
+96,15,13,Fast Charging
+97,15,16,Foldable Design
+98,15,20,Onboard Battery
+99,15,21,Carrying Case
+100,16,1,Bluetooth
+101,16,2,Wired Connection
+102,16,3,Active Noise Cancellation
+103,16,6,Microphone
+104,16,8,Touch Controls
+105,16,9,App Support
+106,16,16,Foldable Design
+107,16,17,Audio Customization
+108,16,18,Hi Res Audio
+109,16,20,Onboard Battery
+110,16,21,Carrying Case
+111,17,1,Bluetooth
+112,17,2,Wired Connection
+113,17,3,Active Noise Cancellation
+114,17,6,Microphone
+115,17,13,Fast Charging
+116,17,18,Hi Res Audio
+117,17,20,Onboard Battery
+118,18,1,Bluetooth
+119,18,2,Wired Connection
+120,18,3,Active Noise Cancellation
+121,18,6,Microphone
+122,18,13,Fast Charging
+123,18,18,Hi Res Audio
+124,18,20,Onboard Battery
+125,19,1,Bluetooth
+126,19,3,Active Noise Cancellation
+127,19,6,Microphone
+128,19,13,Fast Charging
+129,19,17,Audio Customization
+130,20,1,Bluetooth
+131,20,4,Passive Noise Isolation
+132,20,8,Touch Controls
+133,20,9,App Support
+134,20,13,Fast Charging
+135,20,20,Onboard Battery
+136,38,22,Touchscreen
+137,38,24,Rear Camera
+138,38,25,Front Camera
+139,38,30,WiFi
+140,38,35,Expandable Storage
+141,39,24,Rear Camera
+142,39,30,WiFi
+143,39,22,Touchscreen
+144,39,37,App Store Access
+145,40,13,Fast Charging
+146,40,24,Rear Camera
+147,40,25,Front Camera
+148,40,30,WiFi
+149,40,31,USB Type C
+150,40,35,Expandable Storage
+151,40,37,App Store Access
+152,41,22,Touchscreen
+153,41,26,Built-In Speakers
+154,41,30,WiFi
+155,41,35,Expandable Storage
+156,41,38,Parental Controls
+157,42,22,Touchscreen
+158,42,23,Stylus Support
+159,42,26,Built-In Speakers
+160,42,30,WiFi
+161,42,36,Desktop Mode Support
+162,43,24,Rear Camera
+163,43,25,Front Camera
+164,43,30,WiFi
+165,43,33,Face Unlock
+166,43,35,Expandable Storage
+167,43,37,App Store Access
+168,44,22,Touchscreen
+169,44,24,Rear Camera
+170,44,25,Front Camera
+171,44,30,WiFi
+172,44,32,Headphone Jack
+173,44,35,Expandable Storage
+174,44,37,App Store Access
+175,45,22,Touchscreen
+176,45,24,Rear Camera
+177,45,25,Front Camera
+178,45,30,WiFi
+179,45,32,Headphone Jack
+180,45,35,Expandable Storage
+181,45,37,App Store Access
+182,46,22,Touchscreen
+183,46,24,Rear Camera
+184,46,27,External Keyboard Support
+185,46,30,WiFi
+186,46,31,USB Type C
+187,46,35,Expandable Storage
+188,46,37,App Store Access
+189,47,13,Fast Charging
+190,47,22,Touchscreen
+191,47,24,Rear Camera
+192,47,29,GPS
+193,47,30,WiFi
+194,47,33,Face Unlock
+195,48,22,Touchscreen
+196,48,24,Rear Camera
+197,48,30,WiFi
+198,48,35,Expandable Storage
+199,48,37,App Store Access
+200,48,38,Parental Controls
+201,49,22,Touchscreen
+202,49,30,WiFi
+203,49,31,USB Type C
+204,49,35,Expandable Storage
+205,49,37,App Store Access
+206,49,38,Parental Controls
+207,50,22,Touchscreen
+208,50,27,External Keyboard Support
+209,50,30,WiFi
+210,50,35,Expandable Storage
+211,50,38,Parental Controls
+212,51,13,Fast Charging
+213,51,24,Rear Camera
+214,51,29,GPS
+215,51,30,WiFi
+216,51,31,USB Type C
+217,51,33,Face Unlock
+218,51,35,Expandable Storage
+219,52,22,Touchscreen
+220,52,23,Stylus Support
+221,52,26,Built-In Speakers
+222,52,27,External Keyboard Support
+223,52,30,WiFi
+224,52,35,Expandable Storage
+225,53,24,Rear Camera
+226,53,30,WiFi
+227,53,35,Expandable Storage
+228,53,37,App Store Access
+229,54,24,Rear Camera
+230,54,30,WiFi
+231,54,35,Expandable Storage
+232,54,37,App Store Access
+233,55,22,Touchscreen
+234,55,24,Rear Camera
+235,55,25,Front Camera
+236,55,30,WiFi
+237,55,35,Expandable Storage
+238,56,13,Fast Charging
+239,56,22,Touchscreen
+240,56,26,Built-In Speakers
+241,56,28,Cellular Connectivity
+242,56,30,WiFi
+243,56,35,Expandable Storage

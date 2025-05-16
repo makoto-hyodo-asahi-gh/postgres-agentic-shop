@@ -1,0 +1,48 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Backend Devcontainer",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+		"dockerfile": "Dockerfile"
+	},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers-extra/features/black:2": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/robbert229/devcontainer-features/postgresql-client:1" : {}
+	},
+	// "postCreateCommand": "./.devcontainer/setupPreCommit.sh",
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [8000],
+
+	// Uncomment the next line to run commands after the container is created.
+	// "postCreateCommand": "cat /etc/os-release",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings:": {
+				"python.defaultinterpreterPath": "/usr/local/bin/python",
+				"python.pythonPath": "/usr/local/bin/python"
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-azuretools.vscode-docker",
+				"ms-python.debugpy",
+				"ms-python.pylint",
+				"ms-python.flake8",
+				"ms-python.black-formatter"
+			]
+		}
+	},
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "vscode"
+	"workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspace,type=bind,consistency=cached",
+	"workspaceFolder": "/workspace/backend"
+}

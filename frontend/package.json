@@ -1,0 +1,50 @@
+{
+  "name": "microsoft-solution-accelerator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/plots": "^2.3.3",
+    "@tanstack/react-query": "^5.66.9",
+    "@xyflow/react": "^12.4.4",
+    "antd": "^5.24.1",
+    "axios": "^1.8.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eventsource": "^3.0.6",
+    "html-react-parser": "^5.2.2",
+    "prettier": "^3.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.2.0",
+    "reactflow": "^11.11.4",
+    "styled-components": "^6.1.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/eventsource": "^1.1.15",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5"
+  }
+}
