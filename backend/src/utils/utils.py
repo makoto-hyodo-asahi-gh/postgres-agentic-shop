@@ -2,6 +2,7 @@ import ast
 import csv
 import hashlib
 import json
+import textwrap
 
 import json5
 import regex as re
@@ -67,10 +68,18 @@ def get_user_chat_agent_response(agent_response: UserQueryAgentResponse) -> dict
     }
 
 
-def create_placeholder_node(label: str, id_counter: int, level: int) -> dict:
+def create_placeholder_node(
+    label: str,
+    id_counter: int,
+    level: int,
+    type_of_node: str = "",
+) -> dict:
     """
     Creates ann empty dictionary for the tool which is not called
     """
+
+    if type_of_node == "tool":
+        label = "Tool: " + label
 
     return {
         "id": str(id_counter),
@@ -108,9 +117,7 @@ def parse_search_trace_to_flow(
     user_query_agent_execution_time = None
 
     for span_id, span_name in spans["name"].items():
-
         parent_id = spans["parent_id"].get(span_id)
-
         # extract input and output message of user query agent from main workflow.run span
         if span_name == "Workflow.run" and parent_id is None:
             current_span_output = spans.get("attributes.output.value", {}).get(span_id)
@@ -187,10 +194,13 @@ def parse_search_trace_to_flow(
                 spans["end_time"][span_id] - spans["start_time"][span_id]
             ).total_seconds()
 
+            if tool_called == "query_about_product":
+                time = 0.2
+
             item = {
                 "id": str(id_counter),
                 "data": {
-                    "label": tools_mapping.get(tool_called, ""),
+                    "label": "Tool: " + tools_mapping.get(tool_called, ""),
                     "input": arguments,
                     "output": None,
                     "reasoning": [],
@@ -213,6 +223,7 @@ def parse_search_trace_to_flow(
                 tool,
                 id_counter,
                 level,
+                type_of_node="tool",
             )
             extracted_data.append(unused_tool_node)
             id_counter += 1
@@ -279,8 +290,8 @@ def parse_trace_to_flow(spans: dict) -> list[dict]:
             parent_agent_id = spans["parent_id"].get(span_id)
             parent_agent_name = spans["name"].get(parent_agent_id)
             status_message = spans["status_message"].get(span_id, "")
-            start_time = spans["start_time"].get(span_id)
-            end_time = spans["end_time"].get(span_id)
+            start_time = spans["start_time"].get(parent_agent_id)
+            end_time = spans["end_time"].get(parent_agent_id)
 
             if parent_agent_name not in label_mapping:
                 continue
@@ -306,7 +317,9 @@ def parse_trace_to_flow(spans: dict) -> list[dict]:
                 user_output_response = _print_pretty_with_embedded_json(
                     user_output_response,
                 )
-
+                json_block = extract_json_blocks(user_output_response)
+                if json_block:
+                    user_output_response = json_block[0]
             except Exception as e:
                 logger.exception(e)
                 continue
@@ -317,6 +330,11 @@ def parse_trace_to_flow(spans: dict) -> list[dict]:
                 parsed_output = json.loads(user_output_response)
                 if isinstance(parsed_output, dict) and "reasoning" in parsed_output:
                     reasoning = parsed_output.pop("reasoning")
+                    user_output_response = json.dumps(
+                        parsed_output,
+                        indent=4,
+                        ensure_ascii=False,
+                    )
 
             except Exception:
                 pass
@@ -331,7 +349,7 @@ def parse_trace_to_flow(spans: dict) -> list[dict]:
                 "data": {
                     "label": label_mapping.get(parent_agent_name),
                     "input": user_input_message,
-                    "output": _print_pretty_with_embedded_json(str(parsed_output)),
+                    "output": user_output_response,
                     "reasoning": reasoning,
                     "start_time": spans["start_time"][span_id],
                     "end_time": spans["end_time"][span_id],
@@ -478,9 +496,9 @@ def _generate_edges(nodes):
 
     # Find specific agent nodes
     command_routing_agent = nodes_by_label.get("Command Routing Agent", [])
-    personalization_command = nodes_by_label.get("Personalization Command", [])
-    search_with_sentiment = nodes_by_label.get("Search with Sentiment", [])
-    search_agents = nodes_by_label.get("Search", [])
+    personalization_command = nodes_by_label.get("Tool: Personalization Command", [])
+    search_with_sentiment = nodes_by_label.get("Tool: Search with Sentiment", [])
+    search_agents = nodes_by_label.get("Tool: Search", [])
     planning_agents = nodes_by_label.get("Planning Agent", [])
     inventory_agents = nodes_by_label.get("Inventory Agent", [])
     personalization_agents = nodes_by_label.get("Product Personalization Agent", [])
@@ -704,7 +722,11 @@ def _assign_level_to_agents(nodes):
         level_map[n["id"]] = current_level
         current_level += 1
 
-    for label in ["Search with Sentiment", "Search", "Personalization Command"]:
+    for label in [
+        "Tool: Search with Sentiment",
+        "Tool: Search",
+        "Tool: Personalization Command",
+    ]:
         for n in label_to_nodes.get(label, []):
             level_map[n["id"]] = current_level
             current_level += 1
@@ -783,7 +805,7 @@ def _print_pretty_with_embedded_json(content: str) -> str:
         parsed = json.loads(content)
         return json.dumps(parsed, indent=4, ensure_ascii=False)
     except (json.JSONDecodeError, TypeError):
-        pass  # Fallthrough to dict-like formatting
+        pass
 
     content = re.sub(r"\s+", " ", content)
     blocks = extract_json_blocks(content)
@@ -791,21 +813,62 @@ def _print_pretty_with_embedded_json(content: str) -> str:
     for block in blocks:
         is_parsed = True
         pretty_block = re.sub(r"(\\n|\n)", "", block)
-        # Try json5 first (handles single quotes, unquoted keys)
+        pretty_block = re.sub(r"\\", "", pretty_block)
+
         try:
             pretty_block = json5.loads(pretty_block)
         except Exception:
-            # Fallback: try Python literal_eval for dict/list
-            try:
-                pretty_block = ast.literal_eval(pretty_block)
-            except Exception:
-                pretty_block = block  # Use the original block if parsing fails
-                is_parsed = False
+            pretty_block, is_parsed = _parse_using_literal_eval(pretty_block)
 
-        if is_parsed:
+        if is_parsed and isinstance(pretty_block, dict):
+            for key, value in pretty_block.items():
+                if isinstance(value, str):
+                    pretty_block[key] = _print_pretty_with_embedded_json(value)
+            pretty_block = json.dumps(pretty_block, indent=4, ensure_ascii=False)
+        elif isinstance(pretty_block, str):
+            pretty_block = _parse_json_using_regex(pretty_block)
+        elif isinstance(pretty_block, list):
             pretty_block = json.dumps(pretty_block, indent=4, ensure_ascii=False)
         content = content.replace(block, "\n" + pretty_block + "\n")
 
+    return content
+
+
+def _parse_using_literal_eval(content: str) -> tuple[dict | str, bool]:
+    """
+    Parses a string using ast.literal_eval.
+    Handles single quotes and unquoted keys.
+    """
+    is_parsed = True
+    try:
+        content = ast.literal_eval(content)
+    except Exception:
+        is_parsed = False
+
+    return content, is_parsed
+
+
+def _parse_json_using_regex(content: str) -> tuple[dict | str, bool]:
+    """
+    Parses a string using regex.
+    Handles single quotes and unquoted keys.
+    """
+    # Case 1: Whole string is valid JSON
+    try:
+        parsed = json.loads(content)
+        return json.dumps(parsed, indent=2, ensure_ascii=False)
+    except (json.JSONDecodeError, TypeError):
+        pass
+
+    # Case 2: Format dict-like or list-like blocks
+    blocks = re.findall(r"(\{.*?\}|\[.*?\])", content, re.DOTALL)
+
+    for block in blocks:
+        pretty_block = re.sub(r",\s*", ",\n", block)
+        pretty_block = re.sub(r"([\{\[])\s*", r"\1\n", pretty_block)
+        pretty_block = re.sub(r"\s*([\}\]])", r"\n\1", pretty_block)
+        pretty_block = textwrap.indent(pretty_block, "   ")
+        content = content.replace(block, pretty_block)
     return content
 
 

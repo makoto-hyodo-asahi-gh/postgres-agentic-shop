@@ -52,11 +52,22 @@ const DebugPanelTabs = ({ traceId, shouldRefetch, setShouldRefetch }: DebugPanel
   const sourceData = traceId ? queryFlowData : debugPanelData;
 
   const labelCounter: any = {};
-
+  // count occurrences of all labels in the nodes array
+  const labelOccurrences: any = {};
+  sourceData?.nodes.forEach((node) => {
+    const label = node?.data?.label;
+    if (label) {
+      labelOccurrences[label] = (labelOccurrences[label] || 0) + 1;
+    }
+  });
   const filteredDebugPanelTabs = sourceData?.nodes?.reduce((acc: AgenticNodeItem[], node: AgenticNodeItem) => {
     if (node?.status === 'not_triggered') return acc;
     const nodeData = node;
-    if (labelCounter[node?.data?.label] || ['Review Agent', 'Evaluation Agent'].includes(node?.data?.label)) {
+
+    if (
+      labelCounter[node?.data?.label] ||
+      (['Review Agent', 'Evaluation Agent'].includes(node?.data?.label) && labelOccurrences[node?.data?.label] > 1)
+    ) {
       labelCounter[node?.data?.label] = labelCounter[node?.data?.label] || 0;
       // eslint-disable-next-line no-plusplus
       nodeData.data.labelWithCounter = `${nodeData?.data?.label} (${++labelCounter[nodeData?.data?.label]})`;
@@ -145,7 +156,6 @@ const DebugPanelTabs = ({ traceId, shouldRefetch, setShouldRefetch }: DebugPanel
 
     return filteredDataCopy;
   }, [debugPanelData]);
-  console.log('agentsList', agentsList, 'filteredDebugPanelTabs', filteredDebugPanelTabs);
   const tabItems = useMemo(
     () =>
       agentsList?.map((agent: string, index: number) => ({

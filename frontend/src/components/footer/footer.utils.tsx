@@ -11,7 +11,7 @@ export const columns = [
   {
     title: 'Company Info',
     links: [
-      { label: 'Reset', hred: '#' },
+      { href: '#', label: 'Reset' },
       { href: '#', label: 'About Us' },
       { href: '#', label: 'Carrier' },
       { href: '#', label: 'We are hiring' },

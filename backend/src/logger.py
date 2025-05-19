@@ -4,7 +4,7 @@ import sys
 logger = logging.getLogger("agentic_shop")
 
 formatter = logging.Formatter(
-    fmt="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s",
+    fmt="[%(asctime)s] [PID:%(process)d] [%(levelname)s] [%(name)s] %(message)s",
 )
 
 stream_handler = logging.StreamHandler(sys.stdout)

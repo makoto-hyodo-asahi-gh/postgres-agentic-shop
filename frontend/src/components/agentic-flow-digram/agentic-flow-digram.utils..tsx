@@ -39,7 +39,7 @@ export const transformJsonToFlowData = (inputData: InputData, traceId?: string):
             {
               id: 'command-bar',
               level: '0',
-              xOffset: -60,
+              xOffset: 0,
               data: {
                 label: 'Command Bar',
                 input: '',
@@ -56,7 +56,7 @@ export const transformJsonToFlowData = (inputData: InputData, traceId?: string):
             {
               id: 'platform-personalization',
               level: '0',
-              xOffset: 60,
+              xOffset: 0,
               data: {
                 label: 'Platform Personalization',
                 input: '',

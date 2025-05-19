@@ -26,6 +26,9 @@ async def reset_user_preferences(db: AsyncSession) -> bool:
             logger.info("Deleting from mem0migrations table")
             await db.execute(text("DELETE FROM mem0migrations;"))
 
+            logger.info("Clearing search_history field in users table")
+            await db.execute(text("UPDATE users SET search_history = NULL;"))
+
         logger.info("Adding default data to mem0_chatstore table")
         memory = get_mem0_memory()
 

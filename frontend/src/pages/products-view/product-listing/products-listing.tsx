@@ -75,7 +75,7 @@ const ProductsListing = () => {
   };
 
   useEffect(() => {
-    if (searchQueryInParam && !isStreaming) {
+    if (searchQueryInParam && !isStreaming && !isSomething(streamDataState)) {
       const body = { user_query: searchQueryInParam };
       streamSearch(body, SEARCH_API);
     }

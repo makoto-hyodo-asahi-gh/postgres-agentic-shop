@@ -135,7 +135,8 @@ class UserQueryAgent:
 
         logger.info(f"product search invoked product_category={product_category}")
 
-        response_data = {}
+        products = []
+        product_ids = []
         if product_category:
             results = await product_search(
                 self.db,
@@ -150,40 +151,30 @@ class UserQueryAgent:
             products = results[: settings.PRODUCT_SEARCH_RESPONSE_SIZE]
             if results:
                 product_ids = [product.id for product in products]
-                await run_workflows_in_background(
-                    self.db,
-                    self.user_id,
-                    product_ids,
-                    self.llm,
-                    self.embed_model,
-                    self.memory,
-                    self.vector_store_products_embeddings,
-                    self.vector_store_reviews_embeddings,
-                    self.background_tasks,
-                )
 
-            response_data = {
-                "products": [product.model_dump() for product in products],
-                "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
-                "trace_id": convert_trace_id_to_hex(
-                    get_current_span().get_span_context().trace_id,
-                ),
-            }
-        else:
-            # send empty response if unable to get product category
-            response_data = {
-                "products": [],
-                "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
-                "trace_id": convert_trace_id_to_hex(
-                    get_current_span().get_span_context().trace_id,
-                ),
-            }
-
+        response_data = {
+            "products": [product.model_dump() for product in products],
+            "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
+            "trace_id": convert_trace_id_to_hex(
+                get_current_span().get_span_context().trace_id,
+            ),
+        }
         await send_stream_event(
             response_data,
             EventType.PRODUCT_SEARCH.value,
             self.product_id,
             self.message_queue,
+        )
+        await run_workflows_in_background(
+            self.db,
+            self.user_id,
+            product_ids,
+            self.llm,
+            self.embed_model,
+            self.memory,
+            self.vector_store_products_embeddings,
+            self.vector_store_reviews_embeddings,
+            self.background_tasks,
         )
 
     async def query_reviews_with_sentiment(
@@ -213,6 +204,8 @@ class UserQueryAgent:
             f"product_feature={product_feature}, sentiment={sentiment}",
         )
 
+        products = []
+        product_ids = []
         if product_category:
             results = await product_search(
                 self.db,
@@ -224,14 +217,12 @@ class UserQueryAgent:
                 product_category,
             )
 
-            product_ids = [product.id for product in results]
             feature = await self.get_feature(product_feature)
-
-            products = []
             if feature:
+                product_ids_for_query = [product.id for product in results]
                 product_ids_with_count = (
                     await self.fetch_product_with_feature_and_sentiment_count(
-                        product_ids,
+                        product_ids_for_query,
                         sentiment,
                         feature[0],
                     )
@@ -244,43 +235,32 @@ class UserQueryAgent:
                     product_ids_with_count,
                 )
                 products = products[: settings.PRODUCT_SEARCH_RESPONSE_SIZE]
+                if products:
+                    product_ids = [product.id for product in products]
 
-            response_data = {
-                "products": [product.model_dump() for product in products],
-                "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
-                "trace_id": convert_trace_id_to_hex(
-                    get_current_span().get_span_context().trace_id,
-                ),
-            }
-
-            if products:
-                product_ids = [product.id for product in products]
-                await run_workflows_in_background(
-                    self.db,
-                    self.user_id,
-                    product_ids,
-                    self.llm,
-                    self.embed_model,
-                    self.memory,
-                    self.vector_store_products_embeddings,
-                    self.vector_store_reviews_embeddings,
-                    self.background_tasks,
-                )
-        else:
-            # send empty response if unable to get product category
-            response_data = {
-                "products": [],
-                "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
-                "trace_id": convert_trace_id_to_hex(
-                    get_current_span().get_span_context().trace_id,
-                ),
-            }
-
+        response_data = {
+            "products": [product.model_dump() for product in products],
+            "agent_action": UserQueryAgentAction.PRODUCT_SEARCH.value,
+            "trace_id": convert_trace_id_to_hex(
+                get_current_span().get_span_context().trace_id,
+            ),
+        }
         await send_stream_event(
             response_data,
             EventType.PRODUCT_SEARCH.value,
             self.product_id,
             self.message_queue,
+        )
+        await run_workflows_in_background(
+            self.db,
+            self.user_id,
+            product_ids,
+            self.llm,
+            self.embed_model,
+            self.memory,
+            self.vector_store_products_embeddings,
+            self.vector_store_reviews_embeddings,
+            self.background_tasks,
         )
 
     async def get_feature(self, feature_name: str) -> Optional[tuple[int, str]]:

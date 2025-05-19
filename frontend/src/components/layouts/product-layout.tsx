@@ -39,6 +39,9 @@ const ProductLayout: React.FC<ProductLayoutProps> = ({
   const [isResetting, setIsResetting] = useState(false);
 
   const handleOpenDrawer = () => {
+    if (setEnableErrorCorrection) {
+      setEnableErrorCorrection(false);
+    }
     setIsOpen(true);
     setShouldRefetch(true); // Set refetch flag to true only when user explicitly opens drawer
   };

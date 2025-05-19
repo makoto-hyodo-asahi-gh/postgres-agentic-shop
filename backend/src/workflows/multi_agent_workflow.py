@@ -111,11 +111,11 @@ class MultiAgentFlow(Workflow):
         await self._setup_workflow_context(ctx, ev)
 
         user_profile = await ctx.get("user_profile")
-        planning_agent_query = f"Generate an execution plan for the based on user profile and user query.\n \
+        planning_agent_query = f"Generate an execution plan based on the following user profile\n \
             user={user_profile} \n"
 
         if hasattr(ev, "user_msg") and ev.user_msg:
-            planning_agent_query += f"user query={ev.user_msg}"
+            planning_agent_query += f"\n and user query={ev.user_msg}"
 
         planner_response = await self.planning_agent.run(planning_agent_query)
         logger.info(f"\n\nPlanner response: {planner_response}\n\n")
@@ -187,7 +187,7 @@ class MultiAgentFlow(Workflow):
             # To mock faulty output...
             # Only do this if fault_correction is enabled
             # and this is the first run of the review agent
-            generate_error_prompt = "IMPORTANT: Add some internal review_ids in the review_summary section as references."
+            generate_error_prompt = "\n\nIMPORTANT: Add some internal review_ids in the review_summary section as references."
 
         if ev.self_reflection:
             self_reflection_prompt = SELF_REFLECTION_PROMPT.format(
@@ -199,8 +199,9 @@ class MultiAgentFlow(Workflow):
             prompt = textwrap.dedent(
                 f"""
                 {self_reflection_prompt}
-                Review the user profile information and generate a summary of relevant reviews
-                for the user's preferences: {user_info['user_preferences']} and the user query: {user_message}.
+                Generate a summary of relevant reviews of the product based on the
+                user's preferences: {user_info['user_preferences']}
+                and the optional user query: {user_message}.
                 {generate_error_prompt}
             """,
             )
